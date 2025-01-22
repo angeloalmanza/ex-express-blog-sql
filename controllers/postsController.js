@@ -1,4 +1,5 @@
 const connection = require("../data/db");
+const { connect } = require("../routers/posts");
 
 // Index
 const index = (req, res) => {
@@ -25,19 +26,44 @@ const show = (req, res) => {
     const id = req.params.id;
 
     const sql = `SELECT * FROM posts WHERE id = ?;`;
+
+    const tagsSql = `
+    SELECT tags.*
+    FROM tags
+    JOIN post_tag
+    ON post_tag.tag_id = tags.id
+    JOIN posts
+    ON post_tag.post_id = posts.id
+    WHERE posts.id = ?
+    `
     connection.query(sql, [id], (err, posts) => {
         if (err) {
             return res.status(500).json({
                 message: "Errore interno del server"
             })
-        } else if (posts.length === 0) {
+        } 
+        
+        if (posts.length === 0) {
             return res.status(404).json({
                 message: "Post non trovato"
             })
         } else {
-            return res.status(200).json({
-                status: "success",
-                data: posts[0]
+            connection.query(tagsSql, [id], (err, tags) => {
+                if (err) {
+                    return res.status(500).json({
+                        message: "Errore interno del server"
+                    })
+                }
+
+                const postsDetails = {
+                    ...posts[0],
+                    tags: tags
+                }
+                
+                return res.status(200).json({
+                    status: "success",
+                    data: postsDetails
+                })
             })
         }
     })
