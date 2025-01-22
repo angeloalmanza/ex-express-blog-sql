@@ -10,14 +10,14 @@ router.get('/', postsController.index);
 // Show
 router.get('/:id', checkPostExists, postsController.show);
 
-// Create
-router.post('/', postsController.create);
+// // Create
+// router.post('/', postsController.create);
 
-// Update
-router.put('/:id', checkPostExists, postsController.update);
+// // Update
+// router.put('/:id', checkPostExists, postsController.update);
 
-// Modify
-router.patch('/:id', checkPostExists, postsController.modify);
+// // Modify
+// router.patch('/:id', checkPostExists, postsController.modify);
 
 // Destroy
 router.delete('/:id', checkPostExists, postsController.destroy);

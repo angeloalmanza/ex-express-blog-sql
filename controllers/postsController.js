@@ -1,84 +1,55 @@
-const { log } = require("console");
-const posts = require("../data/posts");
+const connection = require("../data/db");
 
 // Index
 const index = (req, res) => {
-    let postDaVisualizzare = posts;
-
-    const queryString = req.query;
-    if(queryString.tags !== undefined){
-        //faccio un filtro
-        const post = posts.filter((curPost) => curPost.tags.includes(queryString.tags));
-        res.json(post);
-    }else{
-        res.json(postDaVisualizzare);
-    } 
+    //prelevo tutti i post
+    const sql = `SELECT * FROM posts`;
+    connection.query(sql, (err, results) => {
+        //Se la query restituisce un errore, mando errore 500
+        if (err) {
+            return res.status(500).json({
+                message: "Errore interno del server"
+            })
+            //altrimenti restituisco i dati
+        } else {
+            return res.status(200).json({
+                status: "success",
+                data: results
+            })
+        }
+    })
 }
 
 // Show
 const show = (req, res) => {
-    const postID = parseInt(req.params.id);
-    const post = posts.find(p => p.id === postID);
-    res.json(post);
+
 }
 
-// Create
-const create =  (req, res) => {
-    const newPost = req.body;
+// // Create
+// const create =  (req, res) => {
 
-    newPost.id = posts[posts.length - 1].id + 1;
-    posts.push(newPost);
+// }
 
-    res.statusCode = 201;
-    res.json(newPost);
-}
+// // Update
+// const update = (req, res) => {
 
-// Update
-const update = (req, res) => {
-    const postID = parseInt(req.params.id);
-    const postToUpdate = req.body;
-    // Indice elemento da modificare
-    const indexToUpdate = posts.findIndex(curPost => curPost.id === postID);
-    // Aggiorno la chiave id dell'elemento da aggiornare
-    postToUpdate.id = postID;
-    
-    posts[indexToUpdate] = postToUpdate;
-    res.json(postToUpdate);
-}
+// }
 
-// Modify
-const modify = (req, res) => {
-    const postID = parseInt(req.params.id);
-    const postToModify = req.body;
-    
-    const post = posts.find(curPost => curPost.id === postID);
+// // Modify
+// const modify = (req, res) => {
 
-    if(postToModify.title !== undefined) post.title = postToModify.title;
-    if(postToModify.content !== undefined) post.content = postToModify.content;
-    if(postToModify.image !== undefined) post.image = postToModify.image;
-    if(postToModify.tags !== undefined) post.tags = postToModify.tags;
-
-    res.json({
-        post,
-        messagge : "Post modificato con successo"
-    })
-}
+// }
 
 // Destroy
 const destroy = (req, res) => {
-    const postID = parseInt(req.params.id);
-    const indexElementoDaCancellare = posts.findIndex((curPost) => curPost.id === postID);
-    
-    posts.splice(indexElementoDaCancellare, 1);
-    console.log(posts);
-    res.sendStatus(204);
+
 }
 
 module.exports = {
     index,
     show,
-    create,
-    update,
-    modify,
+    // create,
+    // update,
+    // modify,
     destroy
 }
