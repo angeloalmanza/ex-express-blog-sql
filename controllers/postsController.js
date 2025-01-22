@@ -1,5 +1,4 @@
 const connection = require("../data/db");
-const { connect } = require("../routers/posts");
 
 // Index
 const index = (req, res) => {
